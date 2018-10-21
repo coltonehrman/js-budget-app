@@ -28,6 +28,7 @@ const App = (function(Budget, UI) {
 
     function init() {
         const data = Budget.init();
+        UI.updateDate();
 
         data.incomes.forEach(income => UI.addListItem(income));
         data.expenses.forEach(expense => UI.addListItem(expense));
