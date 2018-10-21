@@ -26,11 +26,13 @@ const App = (function(Budget, UI) {
         UI.updateExpensePercentages(Budget.getExpenses());
     }
 
-    function reset() {
-        Budget.reset();
-        UI.updateDate();
-        UI.updateBudget(Budget.calculateBudget());
-        UI.clearInput();
+    function init() {
+        const data = Budget.init();
+
+        data.incomes.forEach(income => UI.addListItem(income));
+        data.expenses.forEach(expense => UI.addListItem(expense));
+
+        update();
     }
 
     function setupEventListeners($) {
@@ -54,7 +56,7 @@ const App = (function(Budget, UI) {
 
     return {
         init: function() {
-            reset();
+            init();
             setupEventListeners(UI.getDOM());
         }
     }

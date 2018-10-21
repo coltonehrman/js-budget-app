@@ -40,6 +40,10 @@ const BudgetController = (function() {
         return lastItem ? lastItem.id + 1 : 0;
     }
 
+    function save() {
+        localStorage.setItem('data', JSON.stringify(data));
+    }
+
     function addItem(type, description, value) {
         const list = data[type + 's'];
         const item = (type === 'income') ?
@@ -47,11 +51,13 @@ const BudgetController = (function() {
             new Expense(nextID(data.expenses), description, value);
 
         list.push(item);
+        save();
         return item;
     }
 
     function deleteItem(type, id) {
         data[type + 's'] = data[type + 's'].filter(item => item.id !== id);
+        save();
     }
 
     function calculateTotal(type) {
@@ -81,9 +87,18 @@ const BudgetController = (function() {
         }
     }
 
-    function reset() {
-        data.expenses = [];
-        data.incomes  = [];
+    function init() {
+        if (localStorage) {
+            if (localStorage.getItem('data')) {
+                const { incomes, expenses } = JSON.parse(localStorage.getItem('data'));
+                data.incomes = incomes.map(income => new Income(income.id, income.description, income.value));
+                data.expenses = expenses.map(expense => new Expense(expense.id, expense.description, expense.value));
+            } else {
+                save();
+            }
+        }
+
+        return data;
     }
 
     return {
@@ -93,7 +108,7 @@ const BudgetController = (function() {
         totalExpense,
         getExpenses,
         calculateBudget,
-        reset
+        init
     };
 
 })();
